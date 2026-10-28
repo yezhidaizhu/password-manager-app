@@ -1,0 +1,23 @@
+Use case: logo-brand
+Asset type: professional modern logo exploration sheet
+Primary request: Design exactly six distinct modern logo concepts for "MAOBAO", a privacy-first local password manager. Every concept must fuse an abstract cat paw with a recognizable password-security idea. Do not make a pure paw logo.
+
+Brand color: saturated bright jade green #20DFA1. This must look vivid, fresh, and energetic, never pale, gray, pastel, minty, faded, or fluorescent. Supporting colors: near-black #0B1712 and clean white #FFFFFF only.
+
+Six fusion directions:
+A — Paw + shield: integrate the central paw pad into a refined shield structure using negative space.
+B — Paw + key: transform one part of the paw into a minimal key shaft or key teeth while preserving a compact silhouette.
+C — Paw + password dots: build the toe pads as a purposeful passcode sequence and connect them to a protected central pad.
+D — Paw + hidden keyhole: place a very subtle keyhole as negative space inside the central pad; avoid a literal lock badge.
+E — Paw + encryption brackets: contain or interlock the paw with minimal code/encryption brackets to suggest protected data.
+F — Paw + vault ring: combine the paw with a simplified circular vault mechanism or secure rotation gesture, kept extremely minimal.
+
+Creative direction: modern, artistic, lightweight, intelligent, precise, optically balanced, memorable at 24px, and suitable for a premium Android app. Security references must be integrated into the paw construction, not placed beside it. Avoid cartoon paws, cute styling, mascots, and generic security clip-art.
+
+Composition: exactly six concepts in a clean 3-by-2 grid on solid white. Label only A-F. For each concept show one large symbol, one compact horizontal lockup with the exact uppercase English wordmark "MAOBAO", and one tiny square app-icon preview. Generous whitespace, equal scale, no overlap.
+
+Style/medium: crisp vector-like logo design, strictly flat solid colors, sharp clean edges, strong silhouettes, precise proportions.
+
+Text constraints: absolutely no Chinese characters anywhere. The only brand text is "MAOBAO".
+
+Constraints: no cat head or face; no standalone shield/key/lock unrelated to the paw; no gradients; no glow; no shadows; no translucency; no 3D; no textures; no photography; no illustrations; no device mockups; no watermark; no slogans; no repeated variants of the same construction.

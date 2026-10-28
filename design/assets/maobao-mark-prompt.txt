@@ -1,0 +1,9 @@
+Use case: logo-brand
+Asset type: transparent-ready app brand mark source
+Primary request: a single modern abstract mark for a local password manager; subtly fuse a refined cat paw with four password dots and a protected central space
+Style/medium: crisp flat vector-like logo, minimal, premium, balanced, recognizable at 32px
+Composition/framing: one centered mark only, generous padding, no wordmark
+Color palette: solid bright jade #20DFA1 and small white negative-space details
+Scene/backdrop: perfectly uniform solid chroma-magenta #FF00FF covering the entire background
+Constraints: no text, no Chinese, no shadow, no glow, no gradient, no 3D, no realistic cat, no mascot, no shield, no lock, no keyhole, no watermark; background must contain only #FF00FF
+

@@ -1,0 +1,17 @@
+Use case: logo-brand
+Asset type: colorful modern brand-logo exploration sheet
+Primary request: Completely redesign six original logo concepts for "MAOBAO", a privacy-first local password manager. Start from zero; do not preserve any previous paw logo construction. Each concept should fuse an abstract cat-paw idea with password protection, encryption, access, or privacy, but it must feel like a memorable brand mark rather than a utility icon.
+
+Color system: use saturated bright jade #20DFA1 as the anchor, combined structurally with two of these colors per concept: vivid pink #FB7299, clear sky blue #48BFFF, warm yellow #FFD166, coral #FF6B6B, deep ink #14211B, clean white #FFFFFF. Every concept must visibly use at least three colors including jade. Color blocks should help construct the symbol, create overlap, reveal negative space, or distinguish security layers. Do not make six green-and-black icons and do not use random rainbow decoration.
+
+Creative direction: modern, artistic, playful-but-not-childish, intelligent, distinctive, lightweight, optically balanced, and recognizable at app-icon size. Explore surprising color interaction, asymmetry, interlocking forms, layered geometry, cutouts, and strong silhouettes. The paw can be abstracted, fragmented, hidden, or reconstructed; security meaning may appear through protected centers, passcode dots, key gestures, encrypted layers, or guarded negative space.
+
+Avoid generic results: no literal shield badge with a paw pasted inside; no paw with a key simply attached below; no standard keyhole centered in a paw; no stock lock icon; no mascot; no cat face or head; no repeated variation of the same shape; no thick clumsy mass.
+
+Composition: exactly six completely different concepts in a clean 3-by-2 grid on solid warm-white #FCFCFA. Label only A-F. For each concept show one large multicolor symbol, one compact horizontal lockup with the exact uppercase English wordmark "MAOBAO", and one tiny rounded-square app-icon preview. Generous whitespace, equal visual scale, no overlap.
+
+Typography: modern custom-looking uppercase sans wordmark, slightly soft geometry, high legibility, no Chinese characters.
+
+Style/medium: crisp vector-like identity design, strictly flat solid color shapes, clean hard edges, precise proportions.
+
+Constraints: absolutely no Chinese characters; no gradients; no glow; no shadows; no blur; no transparency effects; no 3D; no textures; no photography; no illustration scenes; no device mockups; no watermark; no slogans.

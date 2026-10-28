@@ -1,0 +1,10 @@
+Use case: precise-object-edit
+Asset type: high-fidelity Android mobile app UI design board
+Primary request: Convert this exact "猫保" six-screen password-manager design board from dark theme to its matching light theme.
+
+Change only the theme colors. Preserve exactly the same six screens, 3-by-2 layout, geometry, spacing, typography, wording, icons, logo shape, control states, content, and straight-on framing.
+
+Light color palette: app background #F5F7F6, surface #FFFFFF, raised surface #E9EFEC, primary jade #0B7A5B, on-primary #FFFFFF, primary text #17211D, secondary text #53615B, border #D9E1DD, warning #D99A27, danger #B3261E, info #3F6FA8. Use jade only for primary actions, selection, focus, and the logo.
+
+Text requirement: Keep every existing Chinese and English label unchanged and legible. Do not add or remove text.
+Constraints: change only theme colors; no gradients; no glassmorphism; no decorative cards around entire sections; no nested cards; no blue-dominated palette; no purple; no beige; no emoji; no stock imagery; no 3D; no perspective; no watermark; no new elements.

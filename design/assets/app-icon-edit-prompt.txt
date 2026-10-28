@@ -1,0 +1,7 @@
+Use case: precise-object-edit
+Asset type: Android and web app launcher icon
+Primary request: preserve the exact abstract jade paw symbol from the input image and place it as the centered brand mark on a premium deep black-green rounded-square app icon
+Style/medium: clean modern product icon, high-end, minimal, crisp
+Composition/framing: centered symbol occupying about 52 percent of the square; generous safe margin; square 1:1 canvas; rounded-square dark background extending to every edge
+Color palette: background #021A15 with a subtle inner emerald depth; symbol bright jade #20DFA1 with the original white cutouts
+Constraints: preserve the input logo silhouette; no text, no letters, no extra symbols, no cat illustration, no device mockup, no watermark, no transparent outer margin; avoid strong glow and decorative texture

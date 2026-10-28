@@ -1,0 +1,27 @@
+Use case: ui-mockup
+Asset type: high-fidelity mobile bottom-navigation design exploration for MAOBAO password manager
+Primary request: design exactly three genuinely different premium bottom-navigation concepts for the same dark emerald Android app. Focus only on the lower 260 pixels of the phone UI so the navigation is large and easy to compare.
+
+Product context: MAOBAO is a local encrypted password manager. The four destinations are account vault, password generator, local security, and settings.
+
+Exact labels and icon meanings:
+- "账号" with home/vault icon
+- "生成" with sparkle/generator icon
+- "安全" with shield icon
+- "设置" with settings gear icon
+
+Show "账号" as selected in all three concepts. Icons must be crisp, consistent outline icons; the selected icon may become filled.
+
+Concept A — floating capsule dock: one premium deep-green floating pill with generous side and bottom margins, subtle border and soft elevation; selected destination has a jade circular icon plate and refined label emphasis.
+
+Concept B — sculpted raised dock: a slim dark dock with the selected account icon rising slightly above the top edge in a jade medallion; the dock edge forms a controlled notch around it; labels remain aligned and readable; sophisticated rather than playful.
+
+Concept C — segmented precision rail: one compact rounded rectangle divided into four calm segments; the selected segment is a restrained jade-filled tile with dark icon and text; unselected items use muted sage icons and labels; precise industrial spacing.
+
+Composition/framing: 2048x1152 landscape presentation board. Exactly three equal mobile-bottom crops arranged horizontally with generous separation, labeled only A, B, C outside the UI. Straight-on view, no phone hardware, no perspective, no overlap. Show a small amount of empty app content above each dock to establish context.
+
+Visual system: app background #021A15, dock surface #09261F, elevated surface #0E342A, primary bright jade #20DFA1, soft jade #71D9A8, main text #F1FFF8, muted text #95AFA5, border #245246. Modern, elegant, minimal, security-focused.
+
+Interaction quality: 48dp minimum targets, safe-area spacing, stable dimensions, selected state obvious without relying only on color, all four labels visible, balanced icon/text alignment.
+
+Constraints: no generic default Material NavigationBar; no gradients; no neon glow; no glass blur; no oversized decorative elements; no cards inside the dock; no 3D; no phone mockup; no extra navigation items; no English labels; no marketing copy; no watermark.

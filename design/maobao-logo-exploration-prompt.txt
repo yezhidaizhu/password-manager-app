@@ -1,0 +1,17 @@
+Use case: logo-brand
+Asset type: modern logo exploration sheet for a mobile app
+Primary request: Design six distinct, highly modern logo concepts for "猫保", a privacy-first local password manager. Focus only on brand identity, not app UI.
+
+Brand color: #71D9A8. Treat this exact soft vivid jade-green as the fixed standard brand color. Pair only with near-black #111713 and clean off-white #F7FAF8. Use flat brand colors so the hue remains accurate; no lighting tint or material shading.
+
+Creative direction: contemporary, intelligent, light, precise, artistic, memorable, and highly scalable. Explore elegant negative space, clever visual rhythm, refined geometry, or a distinctive custom monogram. The symbol may subtly imply privacy, protection, concealment, alertness, or the name "猫保", but it should reward a second look instead of explaining itself literally.
+
+The logo must not use a literal cat face, cat head outline, cat ears as the obvious silhouette, eyes, whiskers, paw print, shield, padlock, keyhole, vault door, book, doorway, house, letter M, mascot, or security clip-art. Avoid thick blocky masses, chunky badges, fussy details, and dated tech styling.
+
+Composition: clean professional logo presentation sheet with exactly six clearly different concepts in a 3-by-2 grid. Label concepts only as A, B, C, D, E, F. For each concept show one primary symbol and one compact lockup with the exact Chinese wordmark "猫保". Keep generous whitespace and consistent scale. Include a tiny app-icon-size preview for each concept to prove legibility.
+
+Style/medium: crisp vector-like logo design, flat colors, clean edges, balanced negative space, optically corrected proportions, suitable for Android app icon, launcher mark, biometric unlock screen, and monochrome use.
+
+Text requirement: render "猫保" exactly and no other brand name.
+
+Constraints: no gradients; no 3D; no shadows; no mockup devices; no textures; no photography; no illustrations; no watermark; no extra slogans; no generic icons; no repeated variants of the same symbol.

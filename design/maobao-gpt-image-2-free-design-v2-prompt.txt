@@ -1,0 +1,11 @@
+Create a completely new, original, production-quality Android app UI design for "猫保", a privacy-first local password manager.
+
+The interface language is Simplified Chinese. Emerald green is the brand color. The design should be bold, distinctive, contemporary, spatial, and clearly non-flat. Avoid classic or generic mobile-app design. Remove anything unnecessary.
+
+The product stores account credentials locally, unlocks with a master password or biometrics, supports finding and managing credentials, generates passwords, and exposes essential local security settings.
+
+You are the product designer. Independently decide the information architecture, screen selection, navigation, interaction model, layout, hierarchy, component forms, depth, materials, typography, logo treatment, and presentation. Create a genuinely different second design direction. Do not preserve or imitate any previous layout or predetermined screen template.
+
+Do not show real cats, realistic cats, animal photography, animal illustrations, landscapes, fantasy scenes, or decorative character imagery. The only cat reference allowed is a minimal abstract geometric cat-head/keyhole brand symbol.
+
+Present the resulting key app interfaces together as one polished design board. This must be a coherent, shippable app interface, not a landing page, mood board, wireframe, or marketing presentation. No watermark.

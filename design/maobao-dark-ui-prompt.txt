@@ -1,0 +1,22 @@
+Use case: ui-mockup
+Asset type: high-fidelity Android mobile app UI design board
+Primary request: Design a production-ready dark-theme interface for a local password manager named "猫保". Show exactly six distinct Android phone screens in a clean 3-by-2 grid. This is an operational utility, not a marketing page.
+
+Brand: "猫保". Create a simple geometric logo that combines a cat-head outline with a keyhole. Use the logo consistently at small sizes. It must feel trustworthy and restrained, not childish.
+
+Layout and screens:
+1. First setup. Title "创建本地保险库". Two labeled password fields "主密码" and "确认主密码" with visibility icons. Warning text "忘记主密码将无法恢复数据" with an amber warning icon. Primary button "创建保险库".
+2. Unlock. Cat-keyhole logo, title "欢迎回来", labeled field "主密码", primary button "解锁", biometric fingerprint action, helper text "数据仅保存在此设备".
+3. Vault list. App bar title "猫保", settings icon, search field "搜索账号", filter controls "全部" and "收藏", compact account rows for GitHub, Gmail, and AWS with username subtitles, favorite state, and one primary add floating action button.
+4. Account detail. Title "GitHub", username "lin@sample.com", masked password, clear copy and reveal icon actions, website row, notes row, edit action, and a separated destructive delete action.
+5. Edit account with password generator bottom sheet. Labeled fields "名称", "网址 / App", "用户名", "密码", "备注". Generator sheet titled "生成密码" with length 20, slider, options "大写字母", "数字", "符号", generated password preview, and primary button "使用此密码".
+6. Settings. Title "设置". Theme segmented control with "跟随系统", "浅色", "深色" and dark selected. Security rows "生物识别解锁", "自动锁定 1 分钟", "剪贴板清除 30 秒". Backup actions "导出加密备份" and "导入备份". A visually separated danger action "清空保险库".
+
+Style/medium: realistic shippable mobile product UI, Material 3 foundations with a distinctive restrained brand layer; flat surfaces; compact information density; crisp vector icons; precise spacing; no concept-art styling.
+Composition/framing: 3840x2160 landscape design board, exactly six straight-on portrait phone screens, equal size, evenly spaced in a 3-by-2 grid, each fully visible, no perspective, no overlapping. Add small screen-name captions outside the phones. Preserve enough scale for readable UI text.
+Color palette: dark background #101412, surface #171C1A, raised surface #222A26, primary jade #58D6AA, on-primary #063C2C, primary text #EDF4F0, secondary text #AFBBB5, border #2B3530, warning #F2BC54, danger #FFB4AB, info #91B9EA. Use jade only for primary actions, selection, focus, and the logo.
+Typography: clean modern Simplified Chinese sans-serif similar to system Android typography. Normal app-scale headings, no oversized display type, no negative letter spacing.
+Interaction details: 48dp minimum touch targets, visible labels, clear selected and disabled states, one primary action per screen, password fields have visibility controls, destructive actions are separated, safe-area spacing is respected.
+Text requirement: Render all quoted Chinese and English text verbatim, with no extra characters. Keep labels large enough to read.
+Constraints: no gradients; no glassmorphism; no decorative cards around entire sections; no nested cards; no blue-dominated palette; no purple; no beige; no emoji; no stock imagery; no 3D; no device perspective; no watermark; no unrelated logos; no marketing copy; no bottom navigation; no browser UI.
+
