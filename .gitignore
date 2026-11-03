@@ -38,6 +38,7 @@ migrate_working_dir/
 /output/
 /tmp-concept-*.png
 /tmp/imagegen/
+/design/
 
 # Test output
 /coverage/

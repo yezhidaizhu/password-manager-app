@@ -1,8 +1,0 @@
-Use case: ui-mockup
-Asset type: production-ready mobile bottom navigation for KeyNest
-
-KeyNest is a local encrypted password manager with a dark emerald interface. Its bottom navigation has exactly four destinations: "账号", "生成", "安全", "设置". Use clear familiar icons appropriate to those labels. The current brand colors are background #021A15 and jade #20DFA1.
-
-You are the sole product UI designer. Independently decide the navigation layout, container shape, placement, spacing, selected state, icon treatment, typography, elevation, materials, visual hierarchy, and interaction affordances. Do not follow any predetermined navigation concept or common template supplied by the requester. Create the design you judge most appropriate, distinctive, polished, and practical for this product.
-
-Show the navigation in context at the bottom of a real mobile password-vault screen. Use Simplified Chinese labels exactly as provided. Make it shippable and accessible, not a mood board or marketing graphic. No watermark.

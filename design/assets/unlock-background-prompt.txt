@@ -1,9 +1,0 @@
-Use case: stylized-concept
-Asset type: Android password-manager unlock-screen background
-Primary request: a premium abstract emerald security environment with sweeping translucent curved planes and architectural light, matching a high-end local password manager
-Style/medium: polished digital illustration, spatial, minimal, cinematic but suitable behind UI
-Composition/framing: vertical 9:16 portrait; deep dark center with calm negative space for logo and text; brighter emerald curves entering from the far left and lower-right edges; subtle depth; no focal object
-Color palette: near-black #011B15, deep emerald #053D2D, vivid jade #20DFA1, small soft highlights #A8FFE0
-Lighting/mood: controlled luminous edge lighting, private, calm, premium
-Constraints: no text, no letters, no logo, no cat, no animal, no lock, no key, no shield, no UI controls, no device mockup, no watermark; avoid busy texture
-
