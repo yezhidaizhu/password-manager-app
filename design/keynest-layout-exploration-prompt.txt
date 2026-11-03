@@ -1,6 +1,6 @@
 Use case: ui-mockup
 Asset type: mobile UX layout exploration board
-Primary request: Create three fundamentally different information architectures for the main vault screen of "猫保", a local password manager. This is a fresh design exploration, not a restyle. Do not reuse the familiar top app bar + search field + vertical list + floating add button layout.
+Primary request: Create three fundamentally different information architectures for the main vault screen of "KeyNest", a local password manager. This is a fresh design exploration, not a restyle. Do not reuse the familiar top app bar + search field + vertical list + floating add button layout.
 
 Show exactly three straight-on portrait Android app canvases side by side, labeled A, B, and C outside the canvases. Each canvas represents the same vault data: GitHub / octocat, Gmail / user@gmail.com, AWS / dev@company.com, Notion / me@notion.so. Each concept must make account selection, search, favorite state, and adding an account discoverable, but solve the layout differently.
 
@@ -15,7 +15,7 @@ The screen is organized around a bold cat-keyhole search aperture near the cente
 
 Brand and materials: geometric cat-head/keyhole symbol; vivid emerald #00D084 and deep jade #008F5D; obsidian #050A07; smooth matte carbon #101713; cool white #ECF7F0; muted sage #82968A; restrained amber favorite. Use premium emerald acrylic, smoked translucent layers, subtle edge highlights, soft ambient occlusion, and clear spatial separation. Modern and architectural, not retro skeuomorphic, not cyberpunk, not a game UI.
 
-Typography: crisp Simplified Chinese grotesk sans. Use "猫保", "保险库", "搜索账号", "添加账号" only where structurally necessary. Keep account names and usernames legible. Zero letter spacing.
+Typography: crisp Simplified Chinese grotesk sans. Use "KeyNest", "保险库", "搜索账号", "添加账号" only where structurally necessary. Keep account names and usernames legible. Zero letter spacing.
 
 Composition/framing: 2048x1152 landscape board, three equal portrait canvases, fully visible, no phone hardware, no perspective distortion, no overlap, neutral dark studio background. Focus on layout differences rather than decoration.
 

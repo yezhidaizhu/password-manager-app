@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import 'controllers/theme_controller.dart';
 import 'controllers/vault_controller.dart';
 import 'pages/unlock_page.dart';
 import 'pages/vault_shell.dart';
@@ -9,15 +11,16 @@ import 'theme/app_theme.dart';
 
 export 'theme/app_theme.dart';
 
-class MaobaoApp extends StatefulWidget {
-  const MaobaoApp({super.key});
+class KeyNestApp extends StatefulWidget {
+  const KeyNestApp({super.key});
 
   @override
-  State<MaobaoApp> createState() => _MaobaoAppState();
+  State<KeyNestApp> createState() => _KeyNestAppState();
 }
 
-class _MaobaoAppState extends State<MaobaoApp> with WidgetsBindingObserver {
+class _KeyNestAppState extends State<KeyNestApp> with WidgetsBindingObserver {
   final VaultController _controller = VaultController();
+  final ThemeController _themeController = ThemeController();
   Timer? _lockTimer;
 
   @override
@@ -25,6 +28,7 @@ class _MaobaoAppState extends State<MaobaoApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _controller.initialize();
+    _themeController.initialize();
   }
 
   @override
@@ -48,35 +52,60 @@ class _MaobaoAppState extends State<MaobaoApp> with WidgetsBindingObserver {
     _lockTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
+    _themeController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'MAOBAO',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
-      home: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, _) {
-          return switch (_controller.status) {
-            VaultStatus.loading => const _LoadingPage(),
-            VaultStatus.needsSetup => SetupPage(controller: _controller),
-            VaultStatus.locked => UnlockPage(controller: _controller),
-            VaultStatus.unlocked => VaultShell(controller: _controller),
-          };
-        },
-      ),
-      builder: (context, child) {
-        return ColoredBox(
-          color: const Color(0xFF00110D),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 520),
-              child: child ?? const SizedBox.shrink(),
-            ),
+    return AnimatedBuilder(
+      animation: _themeController,
+      builder: (context, _) {
+        return MaterialApp(
+          title: 'KeyNest',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          themeMode: _themeController.mode,
+          home: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, _) {
+              return switch (_controller.status) {
+                VaultStatus.loading => const _LoadingPage(),
+                VaultStatus.needsSetup => SetupPage(controller: _controller),
+                VaultStatus.locked => UnlockPage(controller: _controller),
+                VaultStatus.unlocked => VaultShell(
+                  controller: _controller,
+                  themeController: _themeController,
+                ),
+              };
+            },
           ),
+          builder: (context, child) {
+            final theme = Theme.of(context);
+            final isDark = theme.brightness == Brightness.dark;
+            return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: isDark
+                    ? Brightness.light
+                    : Brightness.dark,
+                systemNavigationBarColor: theme.scaffoldBackgroundColor,
+                systemNavigationBarIconBrightness: isDark
+                    ? Brightness.light
+                    : Brightness.dark,
+              ),
+              child: ColoredBox(
+                color: theme.scaffoldBackgroundColor,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 520),
+                    child: child ?? const SizedBox.shrink(),
+                  ),
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -88,11 +117,17 @@ class _LoadingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('assets/images/unlock_background.png', fit: BoxFit.cover),
+          Image.asset(
+            isDark
+                ? 'assets/images/unlock_background.png'
+                : 'assets/images/unlock_background_light.png',
+            fit: BoxFit.cover,
+          ),
           const Center(child: CircularProgressIndicator()),
         ],
       ),

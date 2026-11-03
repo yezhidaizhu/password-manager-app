@@ -1,0 +1,8 @@
+Use case: lighting-weather
+Asset type: light-theme Android password-manager unlock-screen background
+Primary request: transform this exact dark emerald abstract background into a premium light-theme version while preserving the same sweeping architectural curves, framing, negative space, and composition
+Style/medium: polished spatial digital illustration, minimal and suitable behind mobile UI
+Color palette: cool white #F4F8F6, pale jade #DDF3E9, soft emerald #71D9A8, restrained deep-green edges #0B7A5B
+Lighting/mood: bright diffused daylight, calm, clean, private, premium
+Constraints: change only the theme and lighting; preserve geometry and framing; no text, no logo, no cat, no lock, no UI controls, no device mockup, no watermark; central content area must remain readable
+

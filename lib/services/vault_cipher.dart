@@ -6,6 +6,9 @@ import 'package:cryptography/cryptography.dart';
 class VaultCipher {
   VaultCipher({this.iterations = 600000});
 
+  static const _format = 'keynest-v1';
+  static const _legacyFormat = 'maobao-v1';
+
   final int iterations;
   final AesGcm _cipher = AesGcm.with256bits();
 
@@ -39,7 +42,7 @@ class VaultCipher {
       nonce: _cipher.newNonce(),
     );
     return jsonEncode({
-      'format': 'maobao-v1',
+      'format': _format,
       'kdf': 'pbkdf2-sha256',
       'iterations': rounds,
       'salt': base64Encode(salt),
@@ -74,8 +77,9 @@ class VaultCipher {
 
   VaultMetadata parseMetadata(String envelope) {
     final raw = jsonDecode(envelope);
-    if (raw is! Map<String, dynamic> || raw['format'] != 'maobao-v1') {
-      throw const FormatException('不是有效的 MAOBAO 保险库');
+    if (raw is! Map<String, dynamic> ||
+        (raw['format'] != _format && raw['format'] != _legacyFormat)) {
+      throw const FormatException('不是有效的 KeyNest 保险库');
     }
     final salt = base64Decode(raw['salt'] as String? ?? '');
     final box = base64Decode(raw['box'] as String? ?? '');

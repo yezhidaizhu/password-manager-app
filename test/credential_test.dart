@@ -11,7 +11,7 @@ void main() {
       website: 'https://gitlab.com',
       note: 'work',
       category: '工作',
-      favorite: true,
+      pinned: true,
       createdAt: DateTime.utc(2026, 1, 1),
       updatedAt: DateTime.utc(2026, 1, 2),
     );
@@ -25,6 +25,17 @@ void main() {
     expect(decoded.website, original.website);
     expect(decoded.note, original.note);
     expect(decoded.category, original.category);
-    expect(decoded.favorite, isTrue);
+    expect(decoded.pinned, isTrue);
+  });
+
+  test('legacy favorite flag migrates to pinned', () {
+    final decoded = Credential.fromJson({
+      'name': 'Legacy',
+      'username': 'user',
+      'password': 'secret',
+      'favorite': true,
+    });
+
+    expect(decoded.pinned, isTrue);
   });
 }

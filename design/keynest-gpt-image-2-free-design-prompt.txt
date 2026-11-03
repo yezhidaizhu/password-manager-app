@@ -1,4 +1,4 @@
-Design a complete, original, production-quality Android app UI for "猫保", a privacy-first local password manager.
+Design a complete, original, production-quality Android app UI for "KeyNest", a privacy-first local password manager.
 
 The interface language is Simplified Chinese. Emerald green is the brand color. The design should be bold, distinctive, contemporary, spatial, and clearly non-flat. Avoid classic or generic mobile-app design. Remove anything unnecessary.
 

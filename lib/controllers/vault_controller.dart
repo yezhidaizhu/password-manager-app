@@ -23,6 +23,21 @@ class VaultController extends ChangeNotifier {
   String? errorMessage;
   Timer? _clipboardTimer;
 
+  List<Credential> get orderedCredentials {
+    final ordered = [...credentials];
+    ordered.sort((a, b) {
+      if (a.pinned != b.pinned) return a.pinned ? -1 : 1;
+      return b.updatedAt.compareTo(a.updatedAt);
+    });
+    return ordered;
+  }
+
+  List<String> get categories => <String>{
+    '账号',
+    ...settings.categories,
+    ...credentials.map((item) => item.category.trim()),
+  }.where((item) => item.isNotEmpty).toList();
+
   Future<void> initialize() async {
     status = VaultStatus.loading;
     notifyListeners();
@@ -95,12 +110,57 @@ class VaultController extends ChangeNotifier {
     await _persist();
   }
 
-  Future<void> toggleFavorite(String id) async {
+  Future<void> togglePinned(String id) async {
     credentials = [
       for (final item in credentials)
-        if (item.id == id) item.copyWith(favorite: !item.favorite) else item,
+        if (item.id == id) item.copyWith(pinned: !item.pinned) else item,
     ];
     await _persist();
+  }
+
+  Future<bool> addCategory(String value) async {
+    final name = value.trim();
+    if (name.isEmpty || name == '全部' || categories.contains(name)) {
+      return false;
+    }
+    settings = settings.copyWith(categories: [...categories, name]);
+    await _persist();
+    return true;
+  }
+
+  Future<bool> renameCategory(String previous, String value) async {
+    final name = value.trim();
+    if (previous == '账号' ||
+        name.isEmpty ||
+        name == '全部' ||
+        (name != previous && categories.contains(name))) {
+      return false;
+    }
+    credentials = [
+      for (final item in credentials)
+        if (item.category == previous) item.copyWith(category: name) else item,
+    ];
+    settings = settings.copyWith(
+      categories: [
+        for (final category in categories)
+          if (category == previous) name else category,
+      ],
+    );
+    await _persist();
+    return true;
+  }
+
+  Future<bool> deleteCategory(String value) async {
+    if (value == '账号' || !categories.contains(value)) return false;
+    credentials = [
+      for (final item in credentials)
+        if (item.category == value) item.copyWith(category: '账号') else item,
+    ];
+    settings = settings.copyWith(
+      categories: categories.where((category) => category != value).toList(),
+    );
+    await _persist();
+    return true;
   }
 
   Future<bool> setBiometricEnabled(bool value) async {

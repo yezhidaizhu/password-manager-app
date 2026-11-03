@@ -7,7 +7,7 @@ class Credential {
     this.website = '',
     this.note = '',
     this.category = '账号',
-    this.favorite = false,
+    this.pinned = false,
     this.logoAsset,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -22,7 +22,7 @@ class Credential {
   final String website;
   final String note;
   final String category;
-  final bool favorite;
+  final bool pinned;
   final String? logoAsset;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -34,7 +34,7 @@ class Credential {
     String? website,
     String? note,
     String? category,
-    bool? favorite,
+    bool? pinned,
     String? logoAsset,
   }) {
     return Credential(
@@ -45,7 +45,7 @@ class Credential {
       website: website ?? this.website,
       note: note ?? this.note,
       category: category ?? this.category,
-      favorite: favorite ?? this.favorite,
+      pinned: pinned ?? this.pinned,
       logoAsset: logoAsset ?? this.logoAsset,
       createdAt: createdAt,
       updatedAt: DateTime.now(),
@@ -60,7 +60,7 @@ class Credential {
     'website': website,
     'note': note,
     'category': category,
-    'favorite': favorite,
+    'pinned': pinned,
     'logoAsset': logoAsset,
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
@@ -75,7 +75,7 @@ class Credential {
       website: json['website'] as String? ?? '',
       note: json['note'] as String? ?? '',
       category: json['category'] as String? ?? '账号',
-      favorite: json['favorite'] as bool? ?? false,
+      pinned: json['pinned'] as bool? ?? json['favorite'] as bool? ?? false,
       logoAsset: json['logoAsset'] as String?,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? ''),
       updatedAt: DateTime.tryParse(json['updatedAt'] as String? ?? ''),

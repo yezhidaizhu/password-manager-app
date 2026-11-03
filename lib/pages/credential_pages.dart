@@ -21,7 +21,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final results = widget.controller.credentials.where((item) {
+    final results = widget.controller.orderedCredentials.where((item) {
       final query = _query.toLowerCase();
       return item.name.toLowerCase().contains(query) ||
           item.username.toLowerCase().contains(query);
@@ -30,7 +30,7 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
               Row(
@@ -51,15 +51,15 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Expanded(
                 child: ListView.separated(
                   itemCount: results.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 8),
                   itemBuilder: (context, index) => CredentialTile(
                     credential: results[index],
-                    onFavorite: () =>
-                        widget.controller.toggleFavorite(results[index].id),
+                    onPinned: () =>
+                        widget.controller.togglePinned(results[index].id),
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute<void>(
@@ -102,8 +102,8 @@ class _CredentialDetailPageState extends State<CredentialDetailPage> {
     orElse: () => widget.credential,
   );
 
-  void _message(String value) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
+  void _message(String value, {AppToastType type = AppToastType.success}) {
+    showAppToast(context, value, type: type);
   }
 
   Future<void> _copy(String value, String message) async {
@@ -113,7 +113,7 @@ class _CredentialDetailPageState extends State<CredentialDetailPage> {
 
   Future<void> _openWebsite(String website) async {
     if (website.isEmpty) {
-      _message('未填写网站地址');
+      _message('未填写网站地址', type: AppToastType.info);
       return;
     }
     final normalized = website.contains('://') ? website : 'https://$website';
@@ -121,7 +121,7 @@ class _CredentialDetailPageState extends State<CredentialDetailPage> {
     if (uri == null ||
         (uri.scheme != 'https' && uri.scheme != 'http') ||
         !await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      if (mounted) _message('无法打开网站');
+      if (mounted) _message('无法打开网站', type: AppToastType.error);
     }
   }
 
@@ -138,7 +138,7 @@ class _CredentialDetailPageState extends State<CredentialDetailPage> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
+            style: FilledButton.styleFrom(backgroundColor: context.appDanger),
             child: const Text('删除'),
           ),
         ],
@@ -260,7 +260,7 @@ class _CredentialDetailPageState extends State<CredentialDetailPage> {
                 onPressed: () => _delete(item),
                 icon: const Icon(Icons.delete_outline_rounded),
                 label: const Text('删除记录'),
-                style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+                style: TextButton.styleFrom(foregroundColor: context.appDanger),
               ),
             ],
           ),
@@ -296,10 +296,7 @@ class _DetailRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(
-                  color: AppColors.textMuted,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: context.appTextMuted, fontSize: 12),
               ),
               const SizedBox(height: 6),
               Text(value),
@@ -330,17 +327,17 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: primary ? AppColors.primary : AppColors.surface,
+      color: primary ? AppColors.primary : context.appSurface,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onPressed,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          height: 72,
+          height: 60,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: primary ? AppColors.primary : AppColors.border,
+              color: primary ? AppColors.primary : context.appBorder,
             ),
           ),
           child: Column(
@@ -348,14 +345,14 @@ class _ActionButton extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: primary ? const Color(0xFF002E21) : AppColors.text,
+                color: primary ? const Color(0xFF002E21) : context.appText,
               ),
               const SizedBox(height: 5),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: primary ? const Color(0xFF002E21) : AppColors.text,
+                  color: primary ? const Color(0xFF002E21) : context.appText,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -448,6 +445,21 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
     if (generated != null) _password.text = generated;
   }
 
+  Future<void> _manageCategories() async {
+    await Navigator.push<void>(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => CategoryManagementPage(controller: widget.controller),
+      ),
+    );
+    if (!mounted) return;
+    setState(() {
+      if (!widget.controller.categories.contains(_category)) {
+        _category = '账号';
+      }
+    });
+  }
+
   @override
   void dispose() {
     _name.dispose();
@@ -488,15 +500,23 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
                       padding: const EdgeInsets.only(bottom: 18),
                       child: DropdownButtonFormField<String>(
                         value: _category,
-                        decoration: const InputDecoration(labelText: '类型'),
-                        items: const ['账号', '常用', '工作', '生活', '银行', '娱乐']
-                            .map(
-                              (value) => DropdownMenuItem(
-                                value: value,
-                                child: Text(value),
-                              ),
-                            )
-                            .toList(),
+                        decoration: InputDecoration(
+                          labelText: '分类',
+                          suffixIcon: IconButton(
+                            tooltip: '管理分类',
+                            onPressed: _manageCategories,
+                            icon: const Icon(Icons.tune_rounded),
+                          ),
+                        ),
+                        items:
+                            <String>{...widget.controller.categories, _category}
+                                .map(
+                                  (value) => DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value),
+                                  ),
+                                )
+                                .toList(),
                         onChanged: (value) =>
                             setState(() => _category = value ?? '账号'),
                       ),
@@ -529,7 +549,7 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
                         padding: const EdgeInsets.only(bottom: 18),
                         child: Text(
                           _error!,
-                          style: const TextStyle(color: AppColors.danger),
+                          style: TextStyle(color: context.appDanger),
                         ),
                       ),
                     _LabeledField(
@@ -573,7 +593,7 @@ class _LabeledField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(color: AppColors.textMuted, fontSize: 13),
+            style: TextStyle(color: context.appTextMuted, fontSize: 13),
           ),
           const SizedBox(height: 7),
           TextField(

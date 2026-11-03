@@ -8,10 +8,8 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: AppColors.background,
-      systemNavigationBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.transparent,
     ),
   );
-  runApp(const MaobaoApp());
+  runApp(const KeyNestApp());
 }

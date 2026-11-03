@@ -32,4 +32,17 @@ void main() {
       throwsArgumentError,
     );
   });
+
+  test('密码强度随长度和字符类型变化', () {
+    final generator = PasswordGenerator();
+
+    final weak = generator.strengthOf('abcdefgh');
+    final strong = generator.strengthOf('Abcdefgh2345!@#%');
+
+    expect(weak.label, '弱');
+    expect(weak.level, 1);
+    expect(strong.label, '很强');
+    expect(strong.level, 4);
+    expect(strong.value, greaterThan(weak.value));
+  });
 }

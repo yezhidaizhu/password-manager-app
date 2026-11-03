@@ -1,6 +1,6 @@
 Use case: logo-brand
 Asset type: professional modern logo exploration sheet
-Primary request: Design exactly six genuinely different modern cat-paw-based logo concepts for a privacy-first local password manager named "MAOBAO". Each concept must use a different logo-design technique, not a stylistic variation of the same paw.
+Primary request: Design exactly six genuinely different modern cat-paw-based logo concepts for a privacy-first local password manager named "KeyNest". Each concept must use a different logo-design technique, not a stylistic variation of the same paw.
 
 Brand color: exact flat jade green #71D9A8. Supporting colors: near-black #111713 and off-white #F7FAF8 only.
 
@@ -14,10 +14,10 @@ F — Modular paw: one repeatable unit forms both the toe pads and main pad, cre
 
 Creative direction: highly modern, lightweight, intelligent, artistic, optically balanced, memorable at 24px, suitable for a premium Android app. Paw references should be recognizable but abstract and refined, never cute, cartoonish, realistic, or mascot-like. Each design must have a different silhouette and construction logic.
 
-Composition: exactly six concepts in a clean 3-by-2 grid on solid off-white #F7FAF8. Label only A-F. For each concept show one large symbol, one compact horizontal lockup with the exact uppercase English wordmark "MAOBAO", and one tiny square app-icon preview. Generous whitespace, equal scale, no overlap.
+Composition: exactly six concepts in a clean 3-by-2 grid on solid off-white #F7FAF8. Label only A-F. For each concept show one large symbol, one compact horizontal lockup with the exact uppercase English wordmark "KeyNest", and one tiny square app-icon preview. Generous whitespace, equal scale, no overlap.
 
 Style/medium: crisp vector-like logo design, strictly flat solid colors, clean edges, precise proportions.
 
-Text constraints: absolutely no Chinese characters anywhere. The only brand text is "MAOBAO".
+Text constraints: absolutely no Chinese characters anywhere. The only brand text is "KeyNest".
 
 Visual constraints: no cat head, cat face, ears, eyes, whiskers, mascot, shield, padlock, keyhole, vault door, database, sparkle, letter M, or stock security icon. No gradients, glow, shadows, transparency effects, 3D, textures, photography, illustrations, device mockups, watermark, slogans, or repeated symbol family across concepts.

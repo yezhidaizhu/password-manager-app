@@ -1,13 +1,13 @@
 Use case: ui-mockup
 Asset type: bold high-fidelity Android password-manager concept board
-Primary request: Completely redesign the local password manager "猫保" with an unconventional, premium, bold visual identity. Show exactly four essential app screens: unlock, vault list, account detail, and edit with password generator. Remove every nonessential decoration and secondary feature.
+Primary request: Completely redesign the local password manager "KeyNest" with an unconventional, premium, bold visual identity. Show exactly four essential app screens: unlock, vault list, account detail, and edit with password generator. Remove every nonessential decoration and secondary feature.
 
 Brand idea: a sharp geometric cat-head symbol with a keyhole cutout. Treat it as a strong graphic sign, not a cute mascot. The interface should feel like a private encrypted object: direct, controlled, fast.
 
 Visual direction: radical minimalism with editorial composition and subtle industrial-tech character. Strong asymmetry, oversized but disciplined typography, large flat color fields, crisp rules, dense information where useful, deliberate negative space. Avoid conventional Material cards and familiar dashboard composition. Use mostly square or 4px corners, occasional circular controls, and bold typographic hierarchy. No gradients and no glass.
 
 Screens:
-1. Unlock: dominant cat-keyhole mark, "猫保", one master-password field, one decisive "解锁" action, compact fingerprint control, tiny text "仅存储在此设备". Nothing else.
+1. Unlock: dominant cat-keyhole mark, "KeyNest", one master-password field, one decisive "解锁" action, compact fingerprint control, tiny text "仅存储在此设备". Nothing else.
 2. Vault list: "保险库" as a confident header, compact search control, a clean borderless list of GitHub, Gmail, AWS and Notion credentials, username secondary text, restrained favorites, one highly visible add control. No filter chips unless essential.
 3. Account detail: "GitHub" as the visual anchor; username, masked password, website, notes; copy and reveal actions integrated tightly with values; "编辑" secondary action and a distant red delete action. No cards around each field.
 4. Edit plus generator: fields for "名称", "网址 / App", "用户名", "密码", "备注"; generator is a compact full-width panel with password length 20, a strong slider, three minimal toggles, generated password, and "使用此密码". Avoid modal clutter.

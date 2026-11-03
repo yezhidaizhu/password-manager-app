@@ -1,4 +1,4 @@
-# MAOBAO
+# KeyNest
 
 Local-first encrypted password manager built with Flutter.
 
@@ -16,13 +16,15 @@ Local-first encrypted password manager built with Flutter.
 ## Run
 
 ```sh
-flutter run
+make dev          # Web: http://127.0.0.1:8080
+make dev-android  # First available Android device
 ```
 
-For Web UI preview:
+Overrides:
 
 ```sh
-flutter run -d web-server --web-hostname 127.0.0.1 --web-port 8080
+WEB_PORT=8081 make dev
+ANDROID_DEVICE=emulator-5554 make dev-android
 ```
 
 ## Test

@@ -29,12 +29,21 @@ class _UnlockPageState extends State<UnlockPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = Theme.of(context).colorScheme.primary;
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('assets/images/unlock_background.png', fit: BoxFit.cover),
-          const ColoredBox(color: Color(0x5500110D)),
+          Image.asset(
+            isDark
+                ? 'assets/images/unlock_background.png'
+                : 'assets/images/unlock_background_light.png',
+            fit: BoxFit.cover,
+          ),
+          ColoredBox(
+            color: isDark ? const Color(0x5500110D) : const Color(0x18FFFFFF),
+          ),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
@@ -42,27 +51,23 @@ class _UnlockPageState extends State<UnlockPage> {
                 children: [
                   const Spacer(flex: 2),
                   Image.asset(
-                    'assets/images/maobao_mark.png',
+                    'assets/images/keynest_mark.png',
                     width: 88,
                     height: 88,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'MAOBAO',
+                    'KeyNest',
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     '只属于你的密码',
-                    style: TextStyle(
-                      color: AppColors.primarySoft,
-                      letterSpacing: 4,
-                    ),
+                    style: TextStyle(color: accent, letterSpacing: 4),
                   ),
                   const Spacer(flex: 2),
                   SurfacePanel(
-                    color: const Color(0xD908261F),
-                    padding: const EdgeInsets.all(18),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
                         if (widget.controller.biometricConfigured) ...[
@@ -76,26 +81,22 @@ class _UnlockPageState extends State<UnlockPage> {
                               height: 88,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: AppColors.primary.withValues(
-                                  alpha: 0.12,
-                                ),
+                                color: accent.withValues(alpha: 0.12),
                                 border: Border.all(
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.6,
-                                  ),
+                                  color: accent.withValues(alpha: 0.6),
                                 ),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.fingerprint_rounded,
                                 size: 52,
-                                color: AppColors.primary,
+                                color: accent,
                               ),
                             ),
                           ),
                           const SizedBox(height: 12),
                           const Text('使用生物识别解锁'),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16),
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
                             child: Row(
                               children: [
                                 Expanded(child: Divider()),
@@ -104,7 +105,7 @@ class _UnlockPageState extends State<UnlockPage> {
                                   child: Text(
                                     '或输入主密码',
                                     style: TextStyle(
-                                      color: AppColors.textMuted,
+                                      color: context.appTextMuted,
                                     ),
                                   ),
                                 ),
@@ -117,7 +118,7 @@ class _UnlockPageState extends State<UnlockPage> {
                           const SizedBox(height: 10),
                           Text(
                             widget.controller.errorMessage!,
-                            style: const TextStyle(color: AppColors.danger),
+                            style: TextStyle(color: context.appDanger),
                           ),
                         ],
                         if (!widget.controller.biometricConfigured)
@@ -147,7 +148,7 @@ class _UnlockPageState extends State<UnlockPage> {
                         const SizedBox(height: 12),
                         if (widget.controller.busy)
                           const SizedBox(
-                            height: 52,
+                            height: 46,
                             child: Center(child: CircularProgressIndicator()),
                           )
                         else
@@ -160,9 +161,9 @@ class _UnlockPageState extends State<UnlockPage> {
                     ),
                   ),
                   const Spacer(),
-                  const Text(
+                  Text(
                     '数据始终存储在本地设备',
-                    style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                    style: TextStyle(color: context.appTextMuted, fontSize: 12),
                   ),
                 ],
               ),
@@ -217,19 +218,27 @@ class _SetupPageState extends State<SetupPage> {
   @override
   Widget build(BuildContext context) {
     final error = _validationError ?? widget.controller.errorMessage;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('assets/images/unlock_background.png', fit: BoxFit.cover),
-          const ColoredBox(color: Color(0x9900110D)),
+          Image.asset(
+            isDark
+                ? 'assets/images/unlock_background.png'
+                : 'assets/images/unlock_background_light.png',
+            fit: BoxFit.cover,
+          ),
+          ColoredBox(
+            color: isDark ? const Color(0x9900110D) : const Color(0x22FFFFFF),
+          ),
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(24, 44, 24, 24),
               child: Column(
                 children: [
                   Image.asset(
-                    'assets/images/maobao_mark.png',
+                    'assets/images/keynest_mark.png',
                     width: 78,
                     height: 78,
                   ),
@@ -239,14 +248,13 @@ class _SetupPageState extends State<SetupPage> {
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     '主密码只用于本地加密，我们无法替你找回。',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.textMuted),
+                    style: TextStyle(color: context.appTextMuted),
                   ),
                   const SizedBox(height: 28),
                   SurfacePanel(
-                    color: const Color(0xE008261F),
                     child: Column(
                       children: [
                         TextField(
@@ -295,13 +303,13 @@ class _SetupPageState extends State<SetupPage> {
                           const SizedBox(height: 10),
                           Text(
                             error,
-                            style: const TextStyle(color: AppColors.danger),
+                            style: TextStyle(color: context.appDanger),
                           ),
                         ],
                         const SizedBox(height: 18),
                         if (widget.controller.busy)
                           const SizedBox(
-                            height: 52,
+                            height: 46,
                             child: Center(child: CircularProgressIndicator()),
                           )
                         else

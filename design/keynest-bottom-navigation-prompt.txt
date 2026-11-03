@@ -1,8 +1,8 @@
 Use case: ui-mockup
-Asset type: high-fidelity mobile bottom-navigation design exploration for MAOBAO password manager
+Asset type: high-fidelity mobile bottom-navigation design exploration for KeyNest password manager
 Primary request: design exactly three genuinely different premium bottom-navigation concepts for the same dark emerald Android app. Focus only on the lower 260 pixels of the phone UI so the navigation is large and easy to compare.
 
-Product context: MAOBAO is a local encrypted password manager. The four destinations are account vault, password generator, local security, and settings.
+Product context: KeyNest is a local encrypted password manager. The four destinations are account vault, password generator, local security, and settings.
 
 Exact labels and icon meanings:
 - "账号" with home/vault icon

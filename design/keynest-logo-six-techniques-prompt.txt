@@ -1,6 +1,6 @@
 Use case: logo-brand
 Asset type: professional logo exploration sheet
-Primary request: Design exactly six genuinely different modern logo concepts for "猫保", a privacy-first local password manager. Each concept must be built from a different logo-design technique, not a stylistic variation of the same symbol.
+Primary request: Design exactly six genuinely different modern logo concepts for "KeyNest", a privacy-first local password manager. Each concept must be built from a different logo-design technique, not a stylistic variation of the same symbol.
 
 Brand color: exact flat jade green #71D9A8. Supporting colors: near-black #111713 and off-white #F7FAF8 only.
 
@@ -16,7 +16,7 @@ Creative direction: highly modern, intelligent, light, precise, artistic, optica
 
 Avoid literal and generic imagery: no cat face, cat head, obvious cat ears, eyes, whiskers, paw, shield, padlock, keyhole, vault door, book, doorway, house, letter M, database stack, sparkle/star, mascot, or stock security icon. Avoid thick clumsy masses and dated technology styling.
 
-Composition: exactly six concepts in a clean 3-by-2 grid on solid off-white #F7FAF8. Label only A-F. For each concept show: one large symbol, one compact horizontal lockup with the exact Chinese wordmark "猫保", and one tiny square app-icon preview. Generous whitespace, equal scale, no overlap.
+Composition: exactly six concepts in a clean 3-by-2 grid on solid off-white #F7FAF8. Label only A-F. For each concept show: one large symbol, one compact horizontal lockup with the exact Chinese wordmark "KeyNest", and one tiny square app-icon preview. Generous whitespace, equal scale, no overlap.
 
 Style/medium: crisp vector-like logo design, strictly flat solid colors, clean edges, no material rendering.
 

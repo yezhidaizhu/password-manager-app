@@ -1,13 +1,212 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../models/credential.dart';
 import '../theme/app_theme.dart';
 
+enum AppToastType { success, info, error }
+
+OverlayEntry? _activeToastEntry;
+
+void showAppToast(
+  BuildContext context,
+  String message, {
+  AppToastType type = AppToastType.success,
+}) {
+  _activeToastEntry?.remove();
+  late final OverlayEntry entry;
+  entry = OverlayEntry(
+    builder: (_) => _TopToast(
+      message: message,
+      type: type,
+      onDismissed: () {
+        if (_activeToastEntry == entry) _activeToastEntry = null;
+        entry.remove();
+      },
+    ),
+  );
+  _activeToastEntry = entry;
+  Overlay.of(context, rootOverlay: true).insert(entry);
+}
+
+class _TopToast extends StatefulWidget {
+  const _TopToast({
+    required this.message,
+    required this.type,
+    required this.onDismissed,
+  });
+
+  final String message;
+  final AppToastType type;
+  final VoidCallback onDismissed;
+
+  @override
+  State<_TopToast> createState() => _TopToastState();
+}
+
+class _TopToastState extends State<_TopToast>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+  late final Animation<Offset> _slide;
+  Timer? _timer;
+  bool _dismissing = false;
+
+  Color _accent(BuildContext context) => switch (widget.type) {
+    AppToastType.success => Theme.of(context).colorScheme.primary,
+    AppToastType.info => context.appInfo,
+    AppToastType.error => context.appDanger,
+  };
+
+  IconData get _icon => switch (widget.type) {
+    AppToastType.success => Icons.check_rounded,
+    AppToastType.info => Icons.info_outline_rounded,
+    AppToastType.error => Icons.error_outline_rounded,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 260),
+      reverseDuration: const Duration(milliseconds: 180),
+    );
+    _opacity = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+    _slide = Tween<Offset>(
+      begin: const Offset(0, -0.32),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _controller.forward();
+    _timer = Timer(const Duration(milliseconds: 2600), _dismiss);
+  }
+
+  Future<void> _dismiss() async {
+    if (_dismissing) return;
+    _dismissing = true;
+    _timer?.cancel();
+    await _controller.reverse();
+    widget.onDismissed();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = _accent(context);
+    return Positioned(
+      top: MediaQuery.viewPaddingOf(context).top + 12,
+      left: 16,
+      right: 16,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          child: SlideTransition(
+            position: _slide,
+            child: FadeTransition(
+              opacity: _opacity,
+              child: Semantics(
+                liveRegion: true,
+                label: widget.message,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: const EdgeInsets.all(1),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          accent.withValues(alpha: 0.82),
+                          context.appBorder.withValues(alpha: 0.5),
+                          accent.withValues(alpha: 0.28),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        const BoxShadow(
+                          color: Color(0x70000000),
+                          blurRadius: 26,
+                          offset: Offset(0, 10),
+                        ),
+                        BoxShadow(
+                          color: accent.withValues(alpha: 0.12),
+                          blurRadius: 16,
+                        ),
+                      ],
+                    ),
+                    child: Container(
+                      constraints: const BoxConstraints(minHeight: 62),
+                      padding: const EdgeInsets.fromLTRB(12, 9, 7, 9),
+                      decoration: BoxDecoration(
+                        gradient: AppGradients.surface(context),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(17),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: accent.withValues(alpha: 0.14),
+                              border: Border.all(
+                                color: accent.withValues(alpha: 0.34),
+                              ),
+                            ),
+                            child: Icon(_icon, color: accent, size: 21),
+                          ),
+                          const SizedBox(width: 11),
+                          Expanded(
+                            child: Text(
+                              widget.message,
+                              style: TextStyle(
+                                color: context.appText,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: '关闭',
+                            onPressed: _dismiss,
+                            icon: Icon(
+                              Icons.close_rounded,
+                              color: context.appTextMuted,
+                              size: 19,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class SurfacePanel extends StatelessWidget {
   const SurfacePanel({
     required this.child,
     super.key,
-    this.padding = const EdgeInsets.all(16),
+    this.padding = const EdgeInsets.all(14),
     this.margin,
     this.color,
   });
@@ -21,13 +220,20 @@ class SurfacePanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: margin,
-      padding: padding,
       decoration: BoxDecoration(
-        color: color ?? AppColors.surface.withValues(alpha: 0.94),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+        gradient: AppGradients.surfaceBorder(context),
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: child,
+      padding: const EdgeInsets.all(1),
+      child: Container(
+        padding: padding,
+        decoration: BoxDecoration(
+          color: color,
+          gradient: color == null ? AppGradients.surface(context) : null,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: child,
+      ),
     );
   }
 }
@@ -103,77 +309,87 @@ class CredentialTile extends StatelessWidget {
     required this.credential,
     required this.onTap,
     super.key,
-    this.onFavorite,
+    this.onPinned,
   });
 
   final Credential credential;
   final VoidCallback onTap;
-  final VoidCallback? onFavorite;
+  final VoidCallback? onPinned;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(15),
-      child: InkWell(
-        onTap: onTap,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppGradients.surfaceBorder(context),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      padding: const EdgeInsets.all(1),
+      child: Material(
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(15),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        clipBehavior: Clip.antiAlias,
+        child: Ink(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: AppColors.border),
+            gradient: AppGradients.surface(context),
+            borderRadius: const BorderRadius.all(Radius.circular(15)),
           ),
-          child: Row(
-            children: [
-              BrandAvatar(credential: credential, size: 42),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      credential.name,
-                      style: const TextStyle(fontWeight: FontWeight.w700),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(15),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  BrandAvatar(credential: credential, size: 40),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          credential.name,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          credential.username,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: context.appTextMuted,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      credential.username,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (onFavorite != null)
-                IconButton(
-                  tooltip: credential.favorite ? '取消收藏' : '收藏',
-                  onPressed: onFavorite,
-                  icon: Icon(
-                    credential.favorite
-                        ? Icons.star_rounded
-                        : Icons.star_border_rounded,
-                    color: credential.favorite
-                        ? AppColors.warning
-                        : AppColors.textMuted,
-                    size: 20,
                   ),
-                )
-              else if (credential.favorite)
-                const Icon(
-                  Icons.star_rounded,
-                  color: AppColors.warning,
-                  size: 20,
-                ),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.textMuted,
+                  if (onPinned != null)
+                    IconButton(
+                      tooltip: credential.pinned ? '取消置顶' : '置顶',
+                      onPressed: onPinned,
+                      icon: Icon(
+                        credential.pinned
+                            ? Icons.push_pin_rounded
+                            : Icons.push_pin_outlined,
+                        color: credential.pinned
+                            ? Theme.of(context).colorScheme.primary
+                            : context.appTextMuted,
+                        size: 20,
+                      ),
+                    )
+                  else if (credential.pinned)
+                    Icon(
+                      Icons.push_pin_rounded,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 20,
+                    ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: context.appTextMuted,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -197,7 +413,7 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 52,
+      height: 46,
       child: FilledButton.icon(
         onPressed: onPressed,
         icon: icon == null ? const SizedBox.shrink() : Icon(icon),
@@ -206,7 +422,7 @@ class PrimaryButton extends StatelessWidget {
           backgroundColor: AppColors.primary,
           foregroundColor: const Color(0xFF002E21),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
           ),
         ),
       ),
@@ -229,7 +445,7 @@ class PageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 56,
+      height: 50,
       child: Row(
         children: [
           if (onBack != null)

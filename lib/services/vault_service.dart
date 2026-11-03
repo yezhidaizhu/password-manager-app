@@ -17,21 +17,25 @@ class VaultSettings {
     this.biometricEnabled = false,
     this.autoLockMinutes = 1,
     this.clipboardSeconds = 30,
+    this.categories = const ['账号'],
   });
 
   final bool biometricEnabled;
   final int autoLockMinutes;
   final int clipboardSeconds;
+  final List<String> categories;
 
   VaultSettings copyWith({
     bool? biometricEnabled,
     int? autoLockMinutes,
     int? clipboardSeconds,
+    List<String>? categories,
   }) {
     return VaultSettings(
       biometricEnabled: biometricEnabled ?? this.biometricEnabled,
       autoLockMinutes: autoLockMinutes ?? this.autoLockMinutes,
       clipboardSeconds: clipboardSeconds ?? this.clipboardSeconds,
+      categories: categories ?? this.categories,
     );
   }
 
@@ -39,6 +43,7 @@ class VaultSettings {
     'biometricEnabled': biometricEnabled,
     'autoLockMinutes': autoLockMinutes,
     'clipboardSeconds': clipboardSeconds,
+    'categories': categories,
   };
 
   factory VaultSettings.fromJson(Map<String, Object?>? json) {
@@ -47,6 +52,14 @@ class VaultSettings {
       biometricEnabled: json['biometricEnabled'] as bool? ?? false,
       autoLockMinutes: json['autoLockMinutes'] as int? ?? 1,
       clipboardSeconds: json['clipboardSeconds'] as int? ?? 30,
+      categories: json['categories'] is List
+          ? (json['categories'] as List)
+                .whereType<String>()
+                .map((item) => item.trim())
+                .where((item) => item.isNotEmpty)
+                .toSet()
+                .toList()
+          : const ['账号'],
     );
   }
 }
@@ -91,8 +104,10 @@ class VaultData {
 class VaultService {
   VaultService({VaultCipher? cipher}) : _cipher = cipher ?? VaultCipher();
 
-  static const _vaultKey = 'maobao.encrypted-vault';
-  static const _biometricKey = 'maobao.biometric-key';
+  static const _vaultKey = 'keynest.encrypted-vault';
+  static const _biometricKey = 'keynest.biometric-key';
+  static const _legacyVaultKey = 'maobao.encrypted-vault';
+  static const _legacyBiometricKey = 'maobao.biometric-key';
 
   final VaultCipher _cipher;
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
@@ -104,6 +119,7 @@ class VaultService {
 
   Future<bool> hasVault() async {
     final preferences = await _preferences;
+    await _migrateLegacyVault(preferences);
     return preferences.getString(_vaultKey) != null;
   }
 
@@ -134,11 +150,12 @@ class VaultService {
   }
 
   Future<VaultData?> unlockWithBiometrics() async {
+    await _migrateLegacyBiometricKey();
     final encodedKey = await _secureStorage.read(key: _biometricKey);
     if (encodedKey == null) return null;
     try {
       final authenticated = await _localAuth.authenticate(
-        localizedReason: '验证身份以解锁 MAOBAO',
+        localizedReason: '验证身份以解锁 KeyNest',
         options: const AuthenticationOptions(
           biometricOnly: true,
           stickyAuth: true,
@@ -171,6 +188,7 @@ class VaultService {
 
   Future<bool> hasBiometricKey() async {
     try {
+      await _migrateLegacyBiometricKey();
       return await _secureStorage.containsKey(key: _biometricKey);
     } on PlatformException {
       return false;
@@ -219,12 +237,12 @@ class VaultService {
   Future<bool> exportBackup() async {
     final envelope = await _readEnvelope();
     final fileName =
-        'maobao-${DateTime.now().toIso8601String().substring(0, 10)}.maobao';
+        'keynest-${DateTime.now().toIso8601String().substring(0, 10)}.keynest';
     final path = await FilePicker.saveFile(
-      dialogTitle: '导出 MAOBAO 加密备份',
+      dialogTitle: '导出 KeyNest 加密备份',
       fileName: fileName,
       type: FileType.custom,
-      allowedExtensions: const ['maobao'],
+      allowedExtensions: const ['keynest'],
       bytes: Uint8List.fromList(utf8.encode(envelope)),
     );
     return path != null || kIsWeb;
@@ -232,9 +250,9 @@ class VaultService {
 
   Future<bool> importBackup() async {
     final result = await FilePicker.pickFiles(
-      dialogTitle: '选择 MAOBAO 备份',
+      dialogTitle: '选择 KeyNest 备份',
       type: FileType.custom,
-      allowedExtensions: const ['maobao'],
+      allowedExtensions: const ['keynest', 'maobao'],
       withData: true,
     );
     if (result == null || result.files.isEmpty) return false;
@@ -255,7 +273,9 @@ class VaultService {
   Future<void> clear() async {
     final preferences = await _preferences;
     await preferences.remove(_vaultKey);
+    await preferences.remove(_legacyVaultKey);
     await _secureStorage.delete(key: _biometricKey);
+    await _secureStorage.delete(key: _legacyBiometricKey);
     lock();
   }
 
@@ -266,8 +286,25 @@ class VaultService {
 
   Future<String> _readEnvelope() async {
     final preferences = await _preferences;
+    await _migrateLegacyVault(preferences);
     final envelope = preferences.getString(_vaultKey);
     if (envelope == null) throw StateError('保险库不存在');
     return envelope;
+  }
+
+  Future<void> _migrateLegacyVault(SharedPreferences preferences) async {
+    if (preferences.getString(_vaultKey) != null) return;
+    final legacyEnvelope = preferences.getString(_legacyVaultKey);
+    if (legacyEnvelope == null) return;
+    await preferences.setString(_vaultKey, legacyEnvelope);
+    await preferences.remove(_legacyVaultKey);
+  }
+
+  Future<void> _migrateLegacyBiometricKey() async {
+    if (await _secureStorage.containsKey(key: _biometricKey)) return;
+    final legacyKey = await _secureStorage.read(key: _legacyBiometricKey);
+    if (legacyKey == null) return;
+    await _secureStorage.write(key: _biometricKey, value: legacyKey);
+    await _secureStorage.delete(key: _legacyBiometricKey);
   }
 }
