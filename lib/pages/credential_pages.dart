@@ -20,11 +20,19 @@ class _SearchPageState extends State<SearchPage> {
   String _query = '';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: widget.controller.credentialChanges,
+    builder: (context, _) => _buildContent(context),
+  );
+
+  Widget _buildContent(BuildContext context) {
+    final query = _query.toLowerCase();
     final results = widget.controller.orderedCredentials.where((item) {
-      final query = _query.toLowerCase();
       return item.name.toLowerCase().contains(query) ||
-          item.username.toLowerCase().contains(query);
+          item.username.toLowerCase().contains(query) ||
+          item.website.toLowerCase().contains(query) ||
+          item.note.toLowerCase().contains(query) ||
+          item.tags.any((tag) => tag.toLowerCase().contains(query));
     }).toList();
 
     return Scaffold(
@@ -55,11 +63,21 @@ class _SearchPageState extends State<SearchPage> {
               Expanded(
                 child: ListView.separated(
                   itemCount: results.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 8),
+                  separatorBuilder: (_, _) => const Divider(indent: 56),
                   itemBuilder: (context, index) => CredentialTile(
                     credential: results[index],
-                    onPinned: () =>
-                        widget.controller.togglePinned(results[index].id),
+                    onPinned: () async {
+                      final saved = await widget.controller.togglePinned(
+                        results[index].id,
+                      );
+                      if (!saved && context.mounted) {
+                        showAppToast(
+                          context,
+                          '置顶保存失败，请重试',
+                          type: AppToastType.error,
+                        );
+                      }
+                    },
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute<void>(
@@ -129,28 +147,55 @@ class _CredentialDetailPageState extends State<CredentialDetailPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
         title: const Text('删除记录？'),
-        content: Text('将永久删除 ${item.name}，此操作无法撤销。'),
+        content: SizedBox(
+          width: 360,
+          child: Text('将永久删除 ${item.name}，此操作无法撤销。'),
+        ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(backgroundColor: context.appDanger),
-            child: const Text('删除'),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('取消'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: context.appDanger,
+                    foregroundColor: Theme.of(context).colorScheme.onError,
+                  ),
+                  child: const Text('删除'),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
     if (confirmed != true) return;
-    await widget.controller.deleteCredential(item.id);
+    final saved = await widget.controller.deleteCredential(item.id);
+    if (!mounted) return;
+    if (!saved) {
+      showAppToast(context, '删除失败，请重试', type: AppToastType.error);
+      return;
+    }
     if (mounted) Navigator.pop(context);
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: widget.controller.credentialChanges,
+    builder: (context, _) => _buildContent(context),
+  );
+
+  Widget _buildContent(BuildContext context) {
     final item = _current;
     return Scaffold(
       body: SafeArea(
@@ -183,6 +228,25 @@ class _CredentialDetailPageState extends State<CredentialDetailPage> {
                 item.name,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
+              if (item.tags.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: item.tags
+                        .map(
+                          (tag) => Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: Chip(
+                              label: Text(tag),
+                              visualDensity: const VisualDensity(vertical: -3),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ],
               const SizedBox(height: 18),
               SurfacePanel(
                 child: Column(
@@ -327,17 +391,21 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: primary ? AppColors.primary : context.appSurface,
-      borderRadius: BorderRadius.circular(16),
+      color: primary
+          ? Theme.of(context).colorScheme.primary
+          : context.appSurface,
+      borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         child: Container(
-          height: 60,
+          height: 56,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: primary ? AppColors.primary : context.appBorder,
+              color: primary
+                  ? Theme.of(context).colorScheme.primary
+                  : context.appBorder,
             ),
           ),
           child: Column(
@@ -345,14 +413,18 @@ class _ActionButton extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: primary ? const Color(0xFF002E21) : context.appText,
+                color: primary
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : context.appText,
               ),
               const SizedBox(height: 5),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: primary ? const Color(0xFF002E21) : context.appText,
+                  color: primary
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : context.appText,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -384,8 +456,10 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
   late final TextEditingController _password;
   late final TextEditingController _website;
   late final TextEditingController _note;
-  late String _category;
+  late final TextEditingController _tagInput;
+  late final Set<String> _tags;
   String? _error;
+  bool _saving = false;
 
   @override
   void initState() {
@@ -396,10 +470,29 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
     _password = TextEditingController(text: item?.password);
     _website = TextEditingController(text: item?.website);
     _note = TextEditingController(text: item?.note);
-    _category = item?.category ?? '账号';
+    _tagInput = TextEditingController();
+    _tags = {...?item?.tags};
+  }
+
+  void _addTag([String? value]) {
+    final tag = (value ?? _tagInput.text).trim();
+    if (tag.isEmpty) return;
+    if (tag == '全部') {
+      showAppToast(context, '“全部”不能作为标签', type: AppToastType.error);
+      return;
+    }
+    if (tag.length > 12) {
+      showAppToast(context, '标签最多 12 个字符', type: AppToastType.error);
+      return;
+    }
+    setState(() {
+      _tags.add(tag);
+      _tagInput.clear();
+    });
   }
 
   Future<void> _save() async {
+    if (_saving) return;
     if (_name.text.trim().isEmpty ||
         _username.text.trim().isEmpty ||
         _password.text.isEmpty) {
@@ -414,7 +507,7 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
             password: _password.text,
             website: _website.text.trim(),
             note: _note.text.trim(),
-            category: _category,
+            tags: _tags.toList(),
           )
         : previous.copyWith(
             name: _name.text.trim(),
@@ -422,12 +515,19 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
             password: _password.text,
             website: _website.text.trim(),
             note: _note.text.trim(),
-            category: _category,
+            tags: _tags.toList(),
           );
-    if (previous == null) {
-      await widget.controller.addCredential(credential);
-    } else {
-      await widget.controller.updateCredential(credential);
+    setState(() => _saving = true);
+    final saved = previous == null
+        ? await widget.controller.addCredential(credential)
+        : await widget.controller.updateCredential(credential);
+    if (!mounted) return;
+    if (!saved) {
+      setState(() {
+        _saving = false;
+        _error = '保存失败，请重试';
+      });
+      return;
     }
     if (mounted) Navigator.pop(context, true);
   }
@@ -445,21 +545,6 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
     if (generated != null) _password.text = generated;
   }
 
-  Future<void> _manageCategories() async {
-    await Navigator.push<void>(
-      context,
-      MaterialPageRoute<void>(
-        builder: (_) => CategoryManagementPage(controller: widget.controller),
-      ),
-    );
-    if (!mounted) return;
-    setState(() {
-      if (!widget.controller.categories.contains(_category)) {
-        _category = '账号';
-      }
-    });
-  }
-
   @override
   void dispose() {
     _name.dispose();
@@ -467,6 +552,7 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
     _password.dispose();
     _website.dispose();
     _note.dispose();
+    _tagInput.dispose();
     super.dispose();
   }
 
@@ -483,7 +569,10 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
                 onBack: () => Navigator.pop(context),
                 trailing: IconButton.filled(
                   tooltip: '保存',
-                  onPressed: _save,
+                  onPressed: _saving ? null : _save,
+                  style: IconButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
                   icon: const Icon(Icons.check_rounded),
                 ),
               ),
@@ -498,27 +587,61 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 18),
-                      child: DropdownButtonFormField<String>(
-                        value: _category,
-                        decoration: InputDecoration(
-                          labelText: '分类',
-                          suffixIcon: IconButton(
-                            tooltip: '管理分类',
-                            onPressed: _manageCategories,
-                            icon: const Icon(Icons.tune_rounded),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '标签（可选）',
+                            style: TextStyle(
+                              color: context.appTextMuted,
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                        items:
-                            <String>{...widget.controller.categories, _category}
-                                .map(
-                                  (value) => DropdownMenuItem(
-                                    value: value,
-                                    child: Text(value),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (value) =>
-                            setState(() => _category = value ?? '账号'),
+                          if ({
+                            ...widget.controller.tags,
+                            ..._tags,
+                          }.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: {...widget.controller.tags, ..._tags}
+                                  .map(
+                                    (tag) => FilterChip(
+                                      label: Text(tag),
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      selected: _tags.contains(tag),
+                                      onSelected: (selected) => setState(() {
+                                        if (selected) {
+                                          _tags.add(tag);
+                                        } else {
+                                          _tags.remove(tag);
+                                        }
+                                      }),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ],
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _tagInput,
+                            maxLength: 12,
+                            textInputAction: TextInputAction.done,
+                            decoration: InputDecoration(
+                              hintText: '输入新标签',
+                              counterText: '',
+                              prefixIcon: const Icon(Icons.label_outline),
+                              suffixIcon: IconButton(
+                                tooltip: '添加标签',
+                                onPressed: _addTag,
+                                icon: const Icon(Icons.add_rounded),
+                              ),
+                            ),
+                            onSubmitted: _addTag,
+                          ),
+                        ],
                       ),
                     ),
                     _LabeledField(
@@ -533,9 +656,9 @@ class _EditCredentialPageState extends State<EditCredentialPage> {
                       suffix: IconButton(
                         tooltip: '生成密码',
                         onPressed: _generatePassword,
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.casino_outlined,
-                          color: AppColors.primary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),

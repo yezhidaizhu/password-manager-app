@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const background = Color(0xFF021A15);
-  static const surface = Color(0xFF09261F);
-  static const surfaceHigh = Color(0xFF0E342A);
-  static const primary = Color(0xFF20DFA1);
+  static const background = Color(0xFF101312);
+  static const surface = Color(0xFF181C1A);
+  static const surfaceHigh = Color(0xFF222724);
+  static const primary = Color(0xFF059669);
   static const primarySoft = Color(0xFF71D9A8);
-  static const text = Color(0xFFF1FFF8);
-  static const textMuted = Color(0xFF95AFA5);
-  static const border = Color(0xFF245246);
+  static const text = Color(0xFFF2F5F3);
+  static const textMuted = Color(0xFFA4AAA7);
+  static const border = Color(0xFF343B37);
   static const danger = Color(0xFFFF6B70);
   static const warning = Color(0xFFFFCE55);
   static const info = Color(0xFF49A8FF);
 }
 
 abstract final class AppLightColors {
-  static const background = Color(0xFFF4F8F6);
+  static const background = Color(0xFFF6F7F8);
   static const surface = Color(0xFFFFFFFF);
-  static const surfaceHigh = Color(0xFFEAF4EF);
-  static const primary = Color(0xFF0B8F68);
+  static const surfaceHigh = Color(0xFFEFF1F2);
+  static const primary = Color(0xFF059669);
   static const primarySoft = Color(0xFF147A5D);
-  static const text = Color(0xFF10241D);
-  static const textMuted = Color(0xFF64786F);
-  static const border = Color(0xFFC5DCD2);
+  static const text = Color(0xFF17191C);
+  static const textMuted = Color(0xFF686D73);
+  static const border = Color(0xFFD9DDE1);
   static const danger = Color(0xFFB3261E);
   static const warning = Color(0xFF9A6400);
   static const info = Color(0xFF1769AA);
@@ -34,28 +34,12 @@ abstract final class AppGradients {
         ? const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF10342B), Color(0xFF08251E)],
+            colors: [Color(0xFF202421), Color(0xFF171A18)],
           )
         : const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFFFFFF), Color(0xFFF0F7F3)],
-          );
-  }
-
-  static LinearGradient surfaceBorder(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            stops: [0, 0.48, 1],
-            colors: [Color(0xAA20DFA1), Color(0x66245246), Color(0x5571D9A8)],
-          )
-        : const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            stops: [0, 0.52, 1],
-            colors: [Color(0x9920DFA1), Color(0xAAC5DCD2), Color(0x5571D9A8)],
+            colors: [Color(0xFFFFFFFF), Color(0xFFF4F5F6)],
           );
   }
 }
@@ -80,14 +64,16 @@ abstract final class AppTheme {
     brightness: Brightness.dark,
     scheme: const ColorScheme.dark(
       primary: AppColors.primary,
-      onPrimary: Color(0xFF002E21),
+      onPrimary: Colors.white,
+      primaryContainer: Color(0xFF183D30),
+      onPrimaryContainer: Color(0xFFA4F5D2),
       secondary: AppColors.primarySoft,
       surface: AppColors.surface,
       onSurface: AppColors.text,
       onSurfaceVariant: AppColors.textMuted,
       error: AppColors.danger,
       outline: AppColors.border,
-      outlineVariant: Color(0xFF173C32),
+      outlineVariant: Color(0xFF292F2C),
     ),
     background: AppColors.background,
   );
@@ -97,13 +83,15 @@ abstract final class AppTheme {
     scheme: const ColorScheme.light(
       primary: AppLightColors.primary,
       onPrimary: Colors.white,
+      primaryContainer: Color(0xFFE2F3EB),
+      onPrimaryContainer: Color(0xFF126347),
       secondary: AppLightColors.primarySoft,
       surface: AppLightColors.surface,
       onSurface: AppLightColors.text,
       onSurfaceVariant: AppLightColors.textMuted,
       error: AppLightColors.danger,
       outline: AppLightColors.border,
-      outlineVariant: Color(0xFFDCE9E3),
+      outlineVariant: Color(0xFFE8EAED),
     ),
     background: AppLightColors.background,
   );
@@ -194,15 +182,29 @@ abstract final class AppTheme {
         ),
       ),
       chipTheme: ChipThemeData(
+        backgroundColor: scheme.surface,
+        selectedColor: scheme.primaryContainer,
+        showCheckmark: false,
+        side: BorderSide(color: scheme.outline),
         padding: const EdgeInsets.symmetric(horizontal: 8),
         labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-        labelStyle: const TextStyle(fontSize: 13),
+        labelStyle: TextStyle(
+          fontSize: 13,
+          color: WidgetStateColor.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? scheme.onPrimaryContainer
+                : scheme.onSurface,
+          ),
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
       listTileTheme: const ListTileThemeData(
         contentPadding: EdgeInsets.symmetric(horizontal: 14),
-        minVerticalPadding: 8,
-        visualDensity: VisualDensity(vertical: -1),
+        dense: true,
+        minLeadingWidth: 36,
+        horizontalTitleGap: 10,
+        minVerticalPadding: 4,
+        visualDensity: VisualDensity(vertical: -2),
       ),
       iconButtonTheme: const IconButtonThemeData(
         style: ButtonStyle(

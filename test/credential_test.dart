@@ -10,7 +10,7 @@ void main() {
       password: 'secret-password',
       website: 'https://gitlab.com',
       note: 'work',
-      category: '工作',
+      tags: const ['工作', '开发'],
       pinned: true,
       createdAt: DateTime.utc(2026, 1, 1),
       updatedAt: DateTime.utc(2026, 1, 2),
@@ -24,7 +24,7 @@ void main() {
     expect(decoded.password, original.password);
     expect(decoded.website, original.website);
     expect(decoded.note, original.note);
-    expect(decoded.category, original.category);
+    expect(decoded.tags, original.tags);
     expect(decoded.pinned, isTrue);
   });
 
@@ -37,5 +37,23 @@ void main() {
     });
 
     expect(decoded.pinned, isTrue);
+  });
+
+  test('legacy custom category migrates to a tag', () {
+    final tagged = Credential.fromJson({
+      'name': 'Legacy',
+      'username': 'user',
+      'password': 'secret',
+      'category': '工作',
+    });
+    final untagged = Credential.fromJson({
+      'name': 'Legacy',
+      'username': 'user',
+      'password': 'secret',
+      'category': '账号',
+    });
+
+    expect(tagged.tags, ['工作']);
+    expect(untagged.tags, isEmpty);
   });
 }

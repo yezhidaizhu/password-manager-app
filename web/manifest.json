@@ -3,7 +3,7 @@
     "short_name": "KeyNest",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#021A15",
+    "background_color": "#101312",
     "theme_color": "#20DFA1",
     "description": "Local encrypted password manager.",
     "orientation": "portrait-primary",

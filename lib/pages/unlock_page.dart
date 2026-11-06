@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../controllers/vault_controller.dart';
@@ -13,163 +14,149 @@ class UnlockPage extends StatefulWidget {
   State<UnlockPage> createState() => _UnlockPageState();
 }
 
-class _UnlockPageState extends State<UnlockPage> {
-  bool _showPassword = false;
+class _UnlockPageState extends State<UnlockPage> with WidgetsBindingObserver {
   final _passwordController = TextEditingController();
+  bool _deviceAuthenticationPrompted = false;
+  bool _showPassword = false;
 
-  void _unlock() {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    if (kIsWeb) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await WidgetsBinding.instance.endOfFrame;
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+      _promptDeviceAuthentication();
+    });
+  }
+
+  void _unlockWithPassword() {
     widget.controller.unlock(_passwordController.text);
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _passwordController.dispose();
     super.dispose();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!kIsWeb && state == AppLifecycleState.resumed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _promptDeviceAuthentication();
+      });
+    }
+  }
+
+  void _promptDeviceAuthentication() {
+    if (!mounted ||
+        WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed ||
+        _deviceAuthenticationPrompted ||
+        !widget.controller.deviceAuthenticationAvailable ||
+        !widget.controller.passwordResetAvailable) {
+      return;
+    }
+    _deviceAuthenticationPrompted = true;
+    widget.controller.unlockWithDeviceAuthentication();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final accent = Theme.of(context).colorScheme.primary;
+    final canUnlock =
+        widget.controller.deviceAuthenticationAvailable &&
+        widget.controller.passwordResetAvailable;
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            isDark
-                ? 'assets/images/unlock_background.png'
-                : 'assets/images/unlock_background_light.png',
-            fit: BoxFit.cover,
-          ),
-          ColoredBox(
-            color: isDark ? const Color(0x5500110D) : const Color(0x18FFFFFF),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+      body: SafeArea(
+        child: SizedBox.expand(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+            child: Center(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Spacer(flex: 2),
                   Image.asset(
                     'assets/images/keynest_mark.png',
-                    width: 88,
-                    height: 88,
+                    width: 64,
+                    height: 64,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'KeyNest',
-                    style: Theme.of(context).textTheme.headlineLarge,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '只属于你的密码',
-                    style: TextStyle(color: accent, letterSpacing: 4),
-                  ),
-                  const Spacer(flex: 2),
-                  SurfacePanel(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        if (widget.controller.biometricConfigured) ...[
-                          InkWell(
-                            onTap: widget.controller.busy
-                                ? null
-                                : widget.controller.unlockWithBiometrics,
-                            borderRadius: BorderRadius.circular(44),
-                            child: Container(
-                              width: 88,
-                              height: 88,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: accent.withValues(alpha: 0.12),
-                                border: Border.all(
-                                  color: accent.withValues(alpha: 0.6),
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.fingerprint_rounded,
-                                size: 52,
-                                color: accent,
-                              ),
-                            ),
+                  const SizedBox(height: 32),
+                  if (kIsWeb) ...[
+                    TextField(
+                      controller: _passwordController,
+                      autofocus: true,
+                      maxLength: 256,
+                      obscureText: !_showPassword,
+                      decoration: InputDecoration(
+                        labelText: '主密码',
+                        counterText: '',
+                        prefixIcon: const Icon(Icons.lock_outline_rounded),
+                        suffixIcon: IconButton(
+                          tooltip: _showPassword ? '隐藏密码' : '显示密码',
+                          onPressed: () =>
+                              setState(() => _showPassword = !_showPassword),
+                          icon: Icon(
+                            _showPassword
+                                ? Icons.visibility_off_rounded
+                                : Icons.visibility_rounded,
                           ),
-                          const SizedBox(height: 12),
-                          const Text('使用生物识别解锁'),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            child: Row(
-                              children: [
-                                Expanded(child: Divider()),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 12),
-                                  child: Text(
-                                    '或输入主密码',
-                                    style: TextStyle(
-                                      color: context.appTextMuted,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(child: Divider()),
-                              ],
-                            ),
-                          ),
-                        ],
-                        if (widget.controller.errorMessage != null) ...[
-                          const SizedBox(height: 10),
-                          Text(
-                            widget.controller.errorMessage!,
-                            style: TextStyle(color: context.appDanger),
-                          ),
-                        ],
-                        if (!widget.controller.biometricConfigured)
-                          const SizedBox(height: 4),
-                        TextField(
-                          controller: _passwordController,
-                          maxLength: 256,
-                          obscureText: !_showPassword,
-                          decoration: InputDecoration(
-                            hintText: '主密码',
-                            counterText: '',
-                            prefixIcon: const Icon(Icons.lock_outline_rounded),
-                            suffixIcon: IconButton(
-                              tooltip: _showPassword ? '隐藏密码' : '显示密码',
-                              onPressed: () => setState(
-                                () => _showPassword = !_showPassword,
-                              ),
-                              icon: Icon(
-                                _showPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                            ),
-                          ),
-                          onSubmitted: (_) => _unlock(),
                         ),
-                        const SizedBox(height: 12),
-                        if (widget.controller.busy)
-                          const SizedBox(
-                            height: 46,
-                            child: Center(child: CircularProgressIndicator()),
-                          )
-                        else
-                          PrimaryButton(
-                            label: '解锁',
-                            onPressed: _unlock,
-                            icon: Icons.arrow_forward_rounded,
-                          ),
-                      ],
+                      ),
+                      onSubmitted: (_) => _unlockWithPassword(),
                     ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    '数据始终存储在本地设备',
-                    style: TextStyle(color: context.appTextMuted, fontSize: 12),
-                  ),
+                    const SizedBox(height: 14),
+                    if (!widget.controller.busy)
+                      PrimaryButton(
+                        label: '解锁',
+                        onPressed: _unlockWithPassword,
+                        icon: Icons.arrow_forward_rounded,
+                      ),
+                  ] else ...[
+                    IconButton(
+                      tooltip: '手机解锁',
+                      onPressed: !canUnlock || widget.controller.busy
+                          ? null
+                          : widget.controller.unlockWithDeviceAuthentication,
+                      icon: const Icon(Icons.fingerprint_rounded, size: 44),
+                      style: IconButton.styleFrom(
+                        minimumSize: const Size(76, 76),
+                        foregroundColor: accent,
+                        disabledForegroundColor: accent,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(canUnlock ? '手机解锁' : '手机解锁不可用'),
+                  ],
+                  if (widget.controller.errorMessage != null) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      widget.controller.errorMessage!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: context.appDanger),
+                    ),
+                  ],
+                  if (widget.controller.busy) ...[
+                    const SizedBox(height: 20),
+                    const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ],
                 ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -188,7 +175,6 @@ class _SetupPageState extends State<SetupPage> {
   final _password = TextEditingController();
   final _confirmation = TextEditingController();
   bool _showPassword = false;
-  bool _enableBiometrics = false;
   String? _validationError;
 
   Future<void> _create() async {
@@ -204,7 +190,7 @@ class _SetupPageState extends State<SetupPage> {
     setState(() => _validationError = null);
     await widget.controller.createVault(
       password,
-      enableBiometrics: _enableBiometrics,
+      enableBiometrics: widget.controller.biometricAvailable,
     );
   }
 
@@ -218,114 +204,96 @@ class _SetupPageState extends State<SetupPage> {
   @override
   Widget build(BuildContext context) {
     final error = _validationError ?? widget.controller.errorMessage;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            isDark
-                ? 'assets/images/unlock_background.png'
-                : 'assets/images/unlock_background_light.png',
-            fit: BoxFit.cover,
-          ),
-          ColoredBox(
-            color: isDark ? const Color(0x9900110D) : const Color(0x22FFFFFF),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 44, 24, 24),
-              child: Column(
-                children: [
-                  Image.asset(
-                    'assets/images/keynest_mark.png',
-                    width: 78,
-                    height: 78,
-                  ),
-                  const SizedBox(height: 14),
-                  Text(
-                    '创建本地保险库',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '主密码只用于本地加密，我们无法替你找回。',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: context.appTextMuted),
-                  ),
-                  const SizedBox(height: 28),
-                  SurfacePanel(
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: _password,
-                          maxLength: 256,
-                          obscureText: !_showPassword,
-                          decoration: InputDecoration(
-                            labelText: '主密码',
-                            counterText: '',
-                            prefixIcon: const Icon(Icons.lock_outline_rounded),
-                            suffixIcon: IconButton(
-                              onPressed: () => setState(
-                                () => _showPassword = !_showPassword,
-                              ),
-                              icon: Icon(
-                                _showPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        TextField(
-                          controller: _confirmation,
-                          maxLength: 256,
-                          obscureText: !_showPassword,
-                          decoration: const InputDecoration(
-                            labelText: '确认主密码',
-                            counterText: '',
-                            prefixIcon: Icon(Icons.lock_reset_rounded),
-                          ),
-                        ),
-                        if (widget.controller.biometricAvailable) ...[
-                          const SizedBox(height: 10),
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            value: _enableBiometrics,
-                            onChanged: (value) =>
-                                setState(() => _enableBiometrics = value),
-                            title: const Text('启用生物识别快捷解锁'),
-                            secondary: const Icon(Icons.fingerprint_rounded),
-                          ),
-                        ],
-                        if (error != null) ...[
-                          const SizedBox(height: 10),
-                          Text(
-                            error,
-                            style: TextStyle(color: context.appDanger),
-                          ),
-                        ],
-                        const SizedBox(height: 18),
-                        if (widget.controller.busy)
-                          const SizedBox(
-                            height: 46,
-                            child: Center(child: CircularProgressIndicator()),
-                          )
-                        else
-                          PrimaryButton(
-                            label: '创建保险库',
-                            onPressed: _create,
-                            icon: Icons.arrow_forward_rounded,
-                          ),
-                      ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(28, 48, 28, 24),
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/keynest_mark.png',
+                width: 78,
+                height: 78,
+              ),
+              const SizedBox(height: 14),
+              Text(
+                '创建本地保险库',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.controller.deviceAuthenticationAvailable
+                    ? '主密码用于本地加密，忘记后可通过手机身份验证重设。'
+                    : '主密码用于本地加密，请妥善保管。',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: context.appTextMuted),
+              ),
+              const SizedBox(height: 32),
+              TextField(
+                controller: _password,
+                maxLength: 256,
+                obscureText: !_showPassword,
+                decoration: InputDecoration(
+                  labelText: '主密码',
+                  counterText: '',
+                  prefixIcon: const Icon(Icons.lock_outline_rounded),
+                  suffixIcon: IconButton(
+                    onPressed: () =>
+                        setState(() => _showPassword = !_showPassword),
+                    icon: Icon(
+                      _showPassword ? Icons.visibility_off : Icons.visibility,
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: _confirmation,
+                maxLength: 256,
+                obscureText: !_showPassword,
+                decoration: const InputDecoration(
+                  labelText: '确认主密码',
+                  counterText: '',
+                  prefixIcon: Icon(Icons.lock_reset_rounded),
+                ),
+              ),
+              if (widget.controller.biometricAvailable) ...[
+                const SizedBox(height: 14),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.fingerprint_rounded,
+                      size: 20,
+                      color: context.appTextMuted,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '将默认启用生物识别解锁',
+                      style: TextStyle(color: context.appTextMuted),
+                    ),
+                  ],
+                ),
+              ],
+              if (error != null) ...[
+                const SizedBox(height: 10),
+                Text(error, style: TextStyle(color: context.appDanger)),
+              ],
+              const SizedBox(height: 18),
+              if (widget.controller.busy)
+                const SizedBox(
+                  height: 46,
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else
+                PrimaryButton(
+                  label: '创建保险库',
+                  onPressed: _create,
+                  icon: Icons.arrow_forward_rounded,
+                ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

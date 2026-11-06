@@ -70,8 +70,8 @@ class _TopToastState extends State<_TopToast>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 260),
-      reverseDuration: const Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 180),
+      reverseDuration: const Duration(milliseconds: 140),
     );
     _opacity = CurvedAnimation(
       parent: _controller,
@@ -83,7 +83,7 @@ class _TopToastState extends State<_TopToast>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.forward();
-    _timer = Timer(const Duration(milliseconds: 2600), _dismiss);
+    _timer = Timer(const Duration(seconds: 2), _dismiss);
   }
 
   Future<void> _dismiss() async {
@@ -106,11 +106,11 @@ class _TopToastState extends State<_TopToast>
     final accent = _accent(context);
     return Positioned(
       top: MediaQuery.viewPaddingOf(context).top + 12,
-      left: 16,
-      right: 16,
+      left: 24,
+      right: 24,
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
+          constraints: const BoxConstraints(maxWidth: 320),
           child: SlideTransition(
             position: _slide,
             child: FadeTransition(
@@ -121,75 +121,35 @@ class _TopToastState extends State<_TopToast>
                 child: Material(
                   color: Colors.transparent,
                   child: Container(
-                    padding: const EdgeInsets.all(1),
+                    constraints: const BoxConstraints(minHeight: 40),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 7,
+                    ),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          accent.withValues(alpha: 0.82),
-                          context.appBorder.withValues(alpha: 0.5),
-                          accent.withValues(alpha: 0.28),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        const BoxShadow(
-                          color: Color(0x70000000),
-                          blurRadius: 26,
-                          offset: Offset(0, 10),
-                        ),
-                        BoxShadow(
-                          color: accent.withValues(alpha: 0.12),
-                          blurRadius: 16,
+                      color: context.appSurface,
+                      border: Border.all(color: accent.withValues(alpha: 0.28)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(_icon, color: accent, size: 16),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            widget.message,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: context.appText,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              height: 1.25,
+                            ),
+                          ),
                         ),
                       ],
-                    ),
-                    child: Container(
-                      constraints: const BoxConstraints(minHeight: 62),
-                      padding: const EdgeInsets.fromLTRB(12, 9, 7, 9),
-                      decoration: BoxDecoration(
-                        gradient: AppGradients.surface(context),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(17),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: accent.withValues(alpha: 0.14),
-                              border: Border.all(
-                                color: accent.withValues(alpha: 0.34),
-                              ),
-                            ),
-                            child: Icon(_icon, color: accent, size: 21),
-                          ),
-                          const SizedBox(width: 11),
-                          Expanded(
-                            child: Text(
-                              widget.message,
-                              style: TextStyle(
-                                color: context.appText,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            tooltip: '关闭',
-                            onPressed: _dismiss,
-                            icon: Icon(
-                              Icons.close_rounded,
-                              color: context.appTextMuted,
-                              size: 19,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ),
@@ -206,7 +166,7 @@ class SurfacePanel extends StatelessWidget {
   const SurfacePanel({
     required this.child,
     super.key,
-    this.padding = const EdgeInsets.all(14),
+    this.padding = const EdgeInsets.all(12),
     this.margin,
     this.color,
   });
@@ -220,20 +180,14 @@ class SurfacePanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: margin,
+      padding: padding,
       decoration: BoxDecoration(
-        gradient: AppGradients.surfaceBorder(context),
-        borderRadius: BorderRadius.circular(16),
+        color: color,
+        gradient: color == null ? AppGradients.surface(context) : null,
+        border: Border.all(color: context.appBorder),
+        borderRadius: BorderRadius.circular(14),
       ),
-      padding: const EdgeInsets.all(1),
-      child: Container(
-        padding: padding,
-        decoration: BoxDecoration(
-          color: color,
-          gradient: color == null ? AppGradients.surface(context) : null,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: child,
-      ),
+      child: child,
     );
   }
 }
@@ -318,78 +272,59 @@ class CredentialTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: AppGradients.surfaceBorder(context),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(1),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(15),
-        clipBehavior: Clip.antiAlias,
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: AppGradients.surface(context),
-            borderRadius: const BorderRadius.all(Radius.circular(15)),
-          ),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(15),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Row(
-                children: [
-                  BrandAvatar(credential: credential, size: 40),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          credential.name,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          credential.username,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: context.appTextMuted,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+          child: Row(
+            children: [
+              BrandAvatar(credential: credential, size: 40),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      credential.name,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
-                  ),
-                  if (onPinned != null)
-                    IconButton(
-                      tooltip: credential.pinned ? '取消置顶' : '置顶',
-                      onPressed: onPinned,
-                      icon: Icon(
-                        credential.pinned
-                            ? Icons.push_pin_rounded
-                            : Icons.push_pin_outlined,
-                        color: credential.pinned
-                            ? Theme.of(context).colorScheme.primary
-                            : context.appTextMuted,
-                        size: 20,
+                    const SizedBox(height: 2),
+                    Text(
+                      credential.username,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: context.appTextMuted,
+                        fontSize: 12,
                       ),
-                    )
-                  else if (credential.pinned)
-                    Icon(
-                      Icons.push_pin_rounded,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 20,
                     ),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    color: context.appTextMuted,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+              if (onPinned != null)
+                IconButton(
+                  tooltip: credential.pinned ? '取消置顶' : '置顶',
+                  onPressed: onPinned,
+                  icon: Icon(
+                    credential.pinned
+                        ? Icons.push_pin_rounded
+                        : Icons.push_pin_outlined,
+                    color: credential.pinned
+                        ? Theme.of(context).colorScheme.primary
+                        : context.appTextMuted,
+                    size: 20,
+                  ),
+                )
+              else if (credential.pinned)
+                Icon(
+                  Icons.push_pin_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 20,
+                ),
+              Icon(Icons.chevron_right_rounded, color: context.appTextMuted),
+            ],
           ),
         ),
       ),
@@ -413,16 +348,16 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 46,
+      height: 44,
       child: FilledButton.icon(
         onPressed: onPressed,
         icon: icon == null ? const SizedBox.shrink() : Icon(icon),
         label: Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: const Color(0xFF002E21),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
@@ -445,7 +380,7 @@ class PageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 50,
+      height: 46,
       child: Row(
         children: [
           if (onBack != null)

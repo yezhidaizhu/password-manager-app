@@ -6,7 +6,7 @@ class Credential {
     required this.password,
     this.website = '',
     this.note = '',
-    this.category = '账号',
+    this.tags = const [],
     this.pinned = false,
     this.logoAsset,
     DateTime? createdAt,
@@ -21,7 +21,7 @@ class Credential {
   final String password;
   final String website;
   final String note;
-  final String category;
+  final List<String> tags;
   final bool pinned;
   final String? logoAsset;
   final DateTime createdAt;
@@ -33,7 +33,7 @@ class Credential {
     String? password,
     String? website,
     String? note,
-    String? category,
+    List<String>? tags,
     bool? pinned,
     String? logoAsset,
   }) {
@@ -44,7 +44,7 @@ class Credential {
       password: password ?? this.password,
       website: website ?? this.website,
       note: note ?? this.note,
-      category: category ?? this.category,
+      tags: tags ?? this.tags,
       pinned: pinned ?? this.pinned,
       logoAsset: logoAsset ?? this.logoAsset,
       createdAt: createdAt,
@@ -59,7 +59,7 @@ class Credential {
     'password': password,
     'website': website,
     'note': note,
-    'category': category,
+    'tags': tags,
     'pinned': pinned,
     'logoAsset': logoAsset,
     'createdAt': createdAt.toIso8601String(),
@@ -67,6 +67,20 @@ class Credential {
   };
 
   factory Credential.fromJson(Map<String, Object?> json) {
+    final tags = json['tags'] is List
+        ? (json['tags'] as List)
+              .whereType<String>()
+              .map((tag) => tag.trim())
+              .where((tag) => tag.isNotEmpty)
+              .toSet()
+              .toList()
+        : <String>[];
+    if (json['tags'] is! List) {
+      final legacyCategory = (json['category'] as String? ?? '').trim();
+      if (legacyCategory.isNotEmpty && legacyCategory != '账号') {
+        tags.add(legacyCategory);
+      }
+    }
     return Credential(
       id: json['id'] as String?,
       name: json['name'] as String? ?? '',
@@ -74,7 +88,7 @@ class Credential {
       password: json['password'] as String? ?? '',
       website: json['website'] as String? ?? '',
       note: json['note'] as String? ?? '',
-      category: json['category'] as String? ?? '账号',
+      tags: tags,
       pinned: json['pinned'] as bool? ?? json['favorite'] as bool? ?? false,
       logoAsset: json['logoAsset'] as String?,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? ''),
