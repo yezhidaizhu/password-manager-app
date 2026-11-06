@@ -21,8 +21,8 @@ class _PasswordResetDialogState extends State<_PasswordResetDialog> {
   String? _error;
 
   void _submit() {
-    if (_password.text.length < 10) {
-      setState(() => _error = '主密码至少需要 10 个字符');
+    if (_password.text.length < 8) {
+      setState(() => _error = '主密码至少需要 8 个字符');
       return;
     }
     if (_password.text != _confirmation.text) {

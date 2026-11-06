@@ -179,8 +179,8 @@ class _SetupPageState extends State<SetupPage> {
 
   Future<void> _create() async {
     final password = _password.text;
-    if (password.length < 10) {
-      setState(() => _validationError = '主密码至少需要 10 个字符');
+    if (password.length < 8) {
+      setState(() => _validationError = '主密码至少需要 8 个字符');
       return;
     }
     if (password != _confirmation.text) {
